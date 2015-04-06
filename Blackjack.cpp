@@ -4,15 +4,17 @@
 #include <ctime>
 using namespace std; 
 
-int poker[52];
-float sum_player, sum_com;
-int cards_player, cards_com;
+int poker[52];	//Use an array to represent a pack of cards.
+float sum_player, sum_com;		//the total value of all cards owned by the player and the computer
+int cards_player, cards_com;	//the number of cards owned by the player and the computer
 
-void shuffle();
-float deal();
+char input();			//examination on the input
+void shuffle();			//initialization
+float deal();			//Randomly give a card to the player or the computer.
 float player_phase();
 float com_phase();
-char input();
+void compare();			/*Compare the total value and the number of cards owned by the player and the computer.
+						  (This only works when the total value of the cards of both the player and the computer are no more than 21.)*/
 
 char input()
 {	string input;
@@ -20,52 +22,53 @@ char input()
 	while (input != "Y" && input != "y" && input != "N" && input != "n"){
 		cout << "  Your input is not correct. Please check and try again.(Y/N)" << endl << "  ";
 		cin >> input;
-	}
-	cin.sync();
+	}										//Keep asking for an input until it is legal.
+	cin.sync();								//Clear the buffer space of "cin" in case that more than one string is entered, which will affect the program later.
 	return input[0];
 }
 
 void shuffle()
 {	for (int i = 0; i <= 51; ++i)
-		poker[i] = i + 1;
+		poker[i] = i + 1;				//Number the cards from 1 to 52.
 	sum_player = 0; sum_com = 0;
-	cards_player = 0; cards_com = 0;
+	cards_player = 0; cards_com = 0;	//initialization
 }
 
 float deal()
 {	int card_num = 0;
 	float value;
-
+	
 	do card_num = rand() % 52;
-	while (poker[card_num] == -1);
+	while (poker[card_num] == -1);		//Randomly choose a card which hasn't been given away.
+	
 	switch (card_num / 13){
 		case 0: cout << "Spade "; break;
 		case 1: cout << "Heart "; break;
 		case 2: cout << "Club "; break;
 		case 3: cout << "Diamond ";
-	}
+	}									//Show the color of the card.
 	switch (card_num % 13){
 		case 0: cout << 'A'; value = 1; break;
 		case 10: cout << 'J'; value = 0.5; break;
 		case 11: cout << 'Q'; value = 0.5; break;
 		case 12: cout << 'K'; value = 0.5; break;
 		default: cout << poker[card_num] % 13; value = poker[card_num] % 13; 
-	}
-	poker[card_num] = -1;
+	}									//Calculate the value of the card.
+	poker[card_num] = -1;				//When a card is given away, change the number in the corresponding position of the array to -1, so it can be recognized.
 	cout << "  ";
 	return value;
 }
 
 float player_phase()
-{	char choice;
-
-	cout << "Player phase:" << endl;
+{	char choice;						//whether to ask for another card
+	
+	cout << "Player phase:" << endl;	
 	cout << "  You've got the cards: ";
 	sum_player += deal();
 	sum_player += deal();
 	cards_player = 2;
 	cout << endl;
-	cout << "  The total value of your cards is: " << sum_player << endl; 
+	cout << "  The total value of your cards is: " << sum_player << endl; 		//Give the player the first two cards.
 	
 	cout << "  One more card?(Y/N)" << endl << "  ";
 	choice = input();
@@ -74,10 +77,11 @@ float player_phase()
 		sum_player += deal();
 		++cards_player;
 		cout << endl;
-		cout << "  The total value of your cards is: " << sum_player << endl;
+		cout << "  The total value of your cards is: " << sum_player << endl;	/*Show the total value of the cards each time a new card is taken,
+		                                                                          so that the player can decide whether to ask for more.*/
 		if (sum_player > 21){
 			cout << "You lose..." << endl;
-			return -1;
+			return -1;							//When the total value is over 21, the player loses.
 		}
 		cout << "  One more card?(Y/N)" << endl << "  ";
 		choice = input();
@@ -92,30 +96,35 @@ float com_phase()
 	sum_com += deal();
 	cards_com = 2;
 	cout << endl;
-	cout << "  The total value of the cards of the computer is: " << sum_com << endl;
+	cout << "  The total value of the cards of the computer is: " << sum_com << endl;	//Give the computer the first two cards.
 	
 	while (sum_com < 21 && (sum_com <= sum_player || (sum_com == sum_player && cards_com <= cards_player))){
 			cout << "  The computer has asked for one more card: ";
 			sum_com += deal();
 			cout << endl;
 			cout << "  The total value of the cards of the computer is: " << sum_com << endl;
-		}
+		}																				/*The computer keeps asking for more cards until
+																							(1)the total value of the cards is 21
+																						  or(2)the total value of the cards is more than that of the player
+																						  or(3)the total value of the cards is equal to that of the player, but
+																								the computer has got more cards.*/
 	if (sum_com > 21){
 		cout << "Congratulations! You win!" << endl;
 		return -1;
-	}
+	}														//When the total value is over 21, the player wins the game.
 	return sum_player; 
 }
 
 void compare()
 {	if (sum_player == sum_com && cards_player == cards_com)
-		cout << "Draw." << endl;
+		cout << "Draw." << endl;							//The same number of cards with the same value means a draw.
 	else{
 		if (sum_player > sum_com || (sum_player == sum_com && cards_player < cards_player) )
 			cout << "Congratulations! You win!" << endl;
 		else
 			cout << "You lose..." << endl;
-	}
+	}														/*The player wins if his or her cards have more value than those of the computer,
+															  or more cards with equal value, and vice versa.*/
 }
 
 int main()
@@ -127,7 +136,8 @@ int main()
 		shuffle();		
 		if (player_phase() != -1){
 			if (com_phase() != -1)
-				void compare();
+				void compare();		/*Only when the total value of the cards of both the player and the computer are no more than 21
+									  do we need to apply the function "compare()" to determine the result.*/
 		}
 		cout << "Play again?(Y/N)" << endl;
 		judge = input();
