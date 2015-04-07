@@ -1,3 +1,8 @@
+//File name: Blackjack.cpp
+/*To make it easier for the user to see the process clearly, <windows.h> is used in the program. But this may cause problems
+  in other operating systems. If you run it in an operating system other than Windows, <windows.h> and all the "Sleep" functions
+  should be deleted.*/
+
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
